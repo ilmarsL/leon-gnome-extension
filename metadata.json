@@ -1,0 +1,8 @@
+{
+  "name": "Leon gnome extension",
+  "description": "Integrates Leon digital assistant into gnome",
+  "uuid": "leonext@ilmarsl.ilmarsl.com",
+  "shell-version": [
+    "42"
+  ]
+}
