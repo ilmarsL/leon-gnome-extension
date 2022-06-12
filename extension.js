@@ -29,15 +29,6 @@ const PopupMenu = imports.ui.popupMenu;
 
 const _ = ExtensionUtils.gettext;
 
-//Chat text display area
-const ChatArea = GObject.registerClass(
-class ChatArea extends PopupMenu.PopupBaseMenuItem {
-    _init() {
-        super._init();
-        this.height = '100';
-    }
-
-});
 
 
 const Indicator = GObject.registerClass(
@@ -62,10 +53,24 @@ class Indicator extends PanelMenu.Button {
         //log('class output');
         //log(Object.getOwnPropertyNames(myItem)); //this shows something, maybe get parent properties?
 
-        let chatArea = new ChatArea();
+        //add chatarea
+        const chatArea = new St.BoxLayout({
+            vertical: true,
+            x_expand: true,
+            y_expand: true,
+        });
+        chatArea.set_size(100,100); //this is probably wrong way to set size, but seems to work
+        this.menu.box.add(chatArea);
 
-        this.menu.addMenuItem(chatArea);
+        //add entry (input field)
         let myEntry = new St.Entry();
+        myEntry.clutter_text.connect('activate', (e) => {
+            log(`activate signal happened ${e.text}`);
+
+            const userInputLabel = new St.Label();
+            userInputLabel.set_text('Hello world');
+            chatArea.add(userInputLabel);
+        });
         this.menu.box.add(myEntry);
 
         //const entry = new St.Entry();
