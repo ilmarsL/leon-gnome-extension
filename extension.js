@@ -75,6 +75,9 @@ class Indicator extends PanelMenu.Button {
         //log('class output');
         //log(Object.getOwnPropertyNames(myItem)); //this shows something, maybe get parent properties?
 
+        //add scrollArea
+        const scrollArea = new St.ScrollView();
+
         //add chatarea
         const chatArea = new St.BoxLayout({
             vertical: true,
@@ -82,6 +85,7 @@ class Indicator extends PanelMenu.Button {
             y_expand: true,
         });
         chatArea.set_size(100,100); //this is probably wrong way to set size, but seems to work
+        //scrollArea.add();
         this.menu.box.add(chatArea);
 
        
@@ -92,14 +96,15 @@ class Indicator extends PanelMenu.Button {
             log(`activate signal happened ${e.text}`);
 
             const userInputLabel = new St.Label();
-            userInputLabel.set_text('Hello world');
+            userInputLabel.set_text(e.text);
             chatArea.add(userInputLabel);
 
             //send http message
             const url = "http://localhost:1337/api/query";
 
 
-            const body = JSON.stringify({'query': 'hi'});
+            const body = JSON.stringify({'query': e.text});
+            myEntry.set_text('');
 
             let message = Soup.Message.new('POST', url);
             //log('message: ');
@@ -121,6 +126,10 @@ class Indicator extends PanelMenu.Button {
                 //log resusl
                 log('response:')
                 log(message.response_body.data)
+                const leonOutputLabel = new St.Label();
+                const response = JSON.parse(message.response_body.data);
+                leonOutputLabel.set_text(response.speeches[0]);
+                chatArea.add(leonOutputLabel);
 
         });
             //message
