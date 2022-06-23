@@ -20,27 +20,49 @@
 
 const GETTEXT_DOMAIN = 'my-indicator-extension';
 
-const { GObject, St, Clutter } = imports.gi;
+const { GObject, Gio, St, Clutter } = imports.gi;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
-const _ = ExtensionUtils.gettext;
+const Soup = imports.gi.Soup;
 
+const _ = ExtensionUtils.gettext;
 
 
 const Indicator = GObject.registerClass(
 class Indicator extends PanelMenu.Button {
+    
+    
     _init() {
         super._init(0.0, _('My Shiny Indicator'));
+
+        //log(Object.getOwnPropertyNames(Soup));
+        log(Soup.MAJOR_VERSION);
+        log(Soup.MINOR_VERSION);
+
+        var _httpSession = new Soup.SessionAsync();
+        Soup.Session.prototype.add_feature.call(_httpSession, new Soup.ProxyResolverDefault());
 
         this.add_child(new St.Icon({
             icon_name: 'face-smile-symbolic',
             style_class: 'system-status-icon',
         }));
 
+        //get settings
+        this.settings = ExtensionUtils.getSettings(
+            'com.ilmarsl.ilmarsl.extensions.leonext');
+
+        const key = this.settings.get_string( 
+                'api-key',
+            );
+
+        log('api key is: ');
+        log(key);
+
+        
         //TODO deafult menu item, remove later
         /* 
         let item = new PopupMenu.PopupMenuItem(_('Show Notification'));
@@ -62,6 +84,8 @@ class Indicator extends PanelMenu.Button {
         chatArea.set_size(100,100); //this is probably wrong way to set size, but seems to work
         this.menu.box.add(chatArea);
 
+       
+
         //add entry (input field)
         let myEntry = new St.Entry();
         myEntry.clutter_text.connect('activate', (e) => {
@@ -70,6 +94,38 @@ class Indicator extends PanelMenu.Button {
             const userInputLabel = new St.Label();
             userInputLabel.set_text('Hello world');
             chatArea.add(userInputLabel);
+
+            //send http message
+            const url = "http://localhost:1337/api/query";
+
+
+            const body = JSON.stringify({'query': 'hi'});
+
+            let message = Soup.Message.new('POST', url);
+            //log('message: ');
+            //log(message);
+            if (message == null) { //message is not null
+                log('message is null');
+            } else {
+                log('message is not null');
+            }
+
+            //log('allProperties:');
+            //log(getAllProperties(message));
+
+            message.request_headers.append('x-api-key', key);
+            
+
+            message.set_request('application/json', 2,body);
+            _httpSession.queue_message(message, function (_httpSession, message){
+                //log resusl
+                log('response:')
+                log(message.response_body.data)
+
+        });
+            //message
+
+            //create promise and do https request
         });
         this.menu.box.add(myEntry);
 
