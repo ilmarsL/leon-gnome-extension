@@ -77,6 +77,15 @@ class Indicator extends PanelMenu.Button {
 
         //add scrollArea
         const scrollArea = new St.ScrollView();
+        scrollArea.vscrollbar_policy = St.PolicyType.AUTOMATIC; //TODO  does not work for some reason
+        const vscroll = scrollArea.get_vscroll_bar();
+        const vscrollAdjustment = vscroll.get_adjustment();
+
+        // Scroll to bottom after new label is added
+        vscrollAdjustment.connect('changed', () => {
+            log('Vscrolladjustment changed');
+            vscrollAdjustment.set_value(vscrollAdjustment.upper);
+        });
 
         //add chatarea
         const chatArea = new St.BoxLayout({
@@ -85,8 +94,8 @@ class Indicator extends PanelMenu.Button {
             y_expand: true,
         });
         chatArea.set_size(100,100); //this is probably wrong way to set size, but seems to work
-        //scrollArea.add();
-        this.menu.box.add(chatArea);
+        scrollArea.add_actor(chatArea);
+        this.menu.box.add_actor(scrollArea);
 
        
 
@@ -97,7 +106,7 @@ class Indicator extends PanelMenu.Button {
 
             const userInputLabel = new St.Label();
             userInputLabel.set_text(e.text);
-            chatArea.add(userInputLabel);
+            chatArea.add_child(userInputLabel);
 
             //send http message
             const url = "http://localhost:1337/api/query";
@@ -107,14 +116,6 @@ class Indicator extends PanelMenu.Button {
             myEntry.set_text('');
 
             let message = Soup.Message.new('POST', url);
-            //log('message: ');
-            //log(message);
-            if (message == null) { //message is not null
-                log('message is null');
-            } else {
-                log('message is not null');
-            }
-
             //log('allProperties:');
             //log(getAllProperties(message));
 
@@ -123,20 +124,17 @@ class Indicator extends PanelMenu.Button {
 
             message.set_request('application/json', 2,body);
             _httpSession.queue_message(message, function (_httpSession, message){
-                //log resusl
-                log('response:')
-                log(message.response_body.data)
                 const leonOutputLabel = new St.Label();
                 const response = JSON.parse(message.response_body.data);
                 leonOutputLabel.set_text(response.speeches[0]);
-                chatArea.add(leonOutputLabel);
-
+                //log(`Height before adding label: ${chatArea.get_height()}`);
+                chatArea.add_child(leonOutputLabel);
         });
             //message
 
             //create promise and do https request
         });
-        this.menu.box.add(myEntry);
+        this.menu.box.add_child(myEntry);
 
         //const entry = new St.Entry();
         //this does not work
