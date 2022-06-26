@@ -93,7 +93,7 @@ class Indicator extends PanelMenu.Button {
             x_expand: true,
             y_expand: true,
         });
-        chatArea.set_size(100,100); //this is probably wrong way to set size, but seems to work
+        chatArea.set_size(100,150); //this is probably wrong way to set size, but seems to work
         scrollArea.add_actor(chatArea);
         this.menu.box.add_actor(scrollArea);
 
@@ -104,11 +104,17 @@ class Indicator extends PanelMenu.Button {
         myEntry.clutter_text.connect('activate', (e) => {
             log(`activate signal happened ${e.text}`);
 
-            const userInputLabel = new St.Label();
+            const userInputLabel = new St.Label({
+                style_class : 'userText'
+            });
             userInputLabel.set_text(e.text);
+     
+
+            //set line wrap
             const clutterText = userInputLabel.get_clutter_text();
             clutterText.set_ellipsize(Pango.EllipsizeMode.NONE);
             clutterText.set_line_wrap(true);
+            clutterText.set_line_alignment(Pango.Alignment.RIGHT);
             chatArea.add_child(userInputLabel);
 
             //send http message
@@ -127,9 +133,13 @@ class Indicator extends PanelMenu.Button {
 
             message.set_request('application/json', 2,body);
             _httpSession.queue_message(message, function (_httpSession, message){
-                const leonOutputLabel = new St.Label();
+                const leonOutputLabel = new St.Label({
+                    style_class : 'leonText'
+                });
                 const response = JSON.parse(message.response_body.data);
                 leonOutputLabel.set_text(response.speeches[0]);
+
+                //set line wrap
                 const clutterOutputText = leonOutputLabel.get_clutter_text();
                 clutterOutputText.set_ellipsize(Pango.EllipsizeMode.NONE);
                 clutterOutputText.set_line_wrap(true);
