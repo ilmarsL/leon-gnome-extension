@@ -20,7 +20,7 @@
 
 const GETTEXT_DOMAIN = 'my-indicator-extension';
 
-const { GObject, Gio, St, Clutter } = imports.gi;
+const { GObject, Gio, St, Clutter, Pango } = imports.gi;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Main = imports.ui.main;
@@ -106,6 +106,9 @@ class Indicator extends PanelMenu.Button {
 
             const userInputLabel = new St.Label();
             userInputLabel.set_text(e.text);
+            const clutterText = userInputLabel.get_clutter_text();
+            clutterText.set_ellipsize(Pango.EllipsizeMode.NONE);
+            clutterText.set_line_wrap(true);
             chatArea.add_child(userInputLabel);
 
             //send http message
@@ -127,7 +130,9 @@ class Indicator extends PanelMenu.Button {
                 const leonOutputLabel = new St.Label();
                 const response = JSON.parse(message.response_body.data);
                 leonOutputLabel.set_text(response.speeches[0]);
-                //log(`Height before adding label: ${chatArea.get_height()}`);
+                const clutterOutputText = leonOutputLabel.get_clutter_text();
+                clutterOutputText.set_ellipsize(Pango.EllipsizeMode.NONE);
+                clutterOutputText.set_line_wrap(true);
                 chatArea.add_child(leonOutputLabel);
         });
             //message
