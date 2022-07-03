@@ -2,9 +2,6 @@
 <schemalist>
   <schema id="com.ilmarsl.ilmarsl.extensions.leonext" path="/org/gnome/shell/extensions/leonext/">
     <!-- See also: https://docs.gtk.org/glib/gvariant-format-strings.html -->
-    <key name="show-indicator" type="b">
-      <default>true</default>
-    </key>
     <key name="api-key" type="s">
       <default>'1'</default>
     </key>
