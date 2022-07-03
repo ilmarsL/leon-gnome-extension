@@ -89,9 +89,7 @@ class Indicator extends PanelMenu.Button {
 
         //add chatarea
         const chatArea = new St.BoxLayout({
-            vertical: true,
-            x_expand: true,
-            y_expand: true,
+            vertical: true
         });
         chatArea.set_size(100,150); //this is probably wrong way to set size, but seems to work
         scrollArea.add_actor(chatArea);
@@ -115,7 +113,14 @@ class Indicator extends PanelMenu.Button {
             clutterText.set_ellipsize(Pango.EllipsizeMode.NONE);
             clutterText.set_line_wrap(true);
             clutterText.set_line_alignment(Pango.Alignment.RIGHT);
-            chatArea.add_child(userInputLabel);
+
+            //put label into a container to prevent horizontal expand
+            const userLabelcontainer = new St.BoxLayout({
+                    vertical: false,
+                    x_align: Clutter.ActorAlign.END,
+                });
+            userLabelcontainer.add_child(userInputLabel);
+            chatArea.add_child(userLabelcontainer);
 
             //send http message
             const url = "http://localhost:1337/api/query";
@@ -125,9 +130,6 @@ class Indicator extends PanelMenu.Button {
             myEntry.set_text('');
 
             let message = Soup.Message.new('POST', url);
-            //log('allProperties:');
-            //log(getAllProperties(message));
-
             message.request_headers.append('x-api-key', key);
             
 
@@ -143,7 +145,14 @@ class Indicator extends PanelMenu.Button {
                 const clutterOutputText = leonOutputLabel.get_clutter_text();
                 clutterOutputText.set_ellipsize(Pango.EllipsizeMode.NONE);
                 clutterOutputText.set_line_wrap(true);
-                chatArea.add_child(leonOutputLabel);
+
+                //put label into a container to prevent horizontal expand
+                const leonLabelcontainer = new St.BoxLayout({
+                    vertical: false,
+                    x_align: Clutter.ActorAlign.START,
+                });
+                leonLabelcontainer.add_child(leonOutputLabel);
+                chatArea.add_child(leonLabelcontainer);
         });
             //message
 
