@@ -18,9 +18,9 @@
 
 /* exported init */
 
-const GETTEXT_DOMAIN = 'my-indicator-extension';
+const GETTEXT_DOMAIN = 'leon-gnome-extension';
 
-const { GObject, Gio, St, Clutter, Pango } = imports.gi;
+const { GObject, St, Clutter, Pango } = imports.gi;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Main = imports.ui.main;
@@ -32,16 +32,11 @@ const Soup = imports.gi.Soup;
 const _ = ExtensionUtils.gettext;
 
 
+
 const Indicator = GObject.registerClass(
-class Indicator extends PanelMenu.Button {
-    
-    
+class Indicator extends PanelMenu.Button {    
     _init() {
         super._init(0.0, _('My Shiny Indicator'));
-
-        //log(Object.getOwnPropertyNames(Soup));
-        log(Soup.MAJOR_VERSION);
-        log(Soup.MINOR_VERSION);
 
         var _httpSession = new Soup.SessionAsync();
         Soup.Session.prototype.add_feature.call(_httpSession, new Soup.ProxyResolverDefault());
@@ -57,13 +52,12 @@ class Indicator extends PanelMenu.Button {
 
         const key = this.settings.get_string( 
                 'api-key',
-            );
+        );
 
         const leonUrl = this.settings.get_string(
             'leon-url',
         );
 
-        
         //add scrollArea
         const scrollArea = new St.ScrollView();
         scrollArea.vscrollbar_policy = St.PolicyType.AUTOMATIC; //TODO  does not work for some reason
@@ -84,20 +78,15 @@ class Indicator extends PanelMenu.Button {
         scrollArea.add_actor(chatArea);
         this.menu.box.add_actor(scrollArea);
 
-       
-
         //add entry (input field)
         let myEntry = new St.Entry();
         myEntry.set_width(100);
 
         myEntry.clutter_text.connect('activate', (e) => {
-            log(`activate signal happened ${e.text}`);
-
             const userInputLabel = new St.Label({
                 style_class : 'userText'
             });
-            userInputLabel.set_text(e.text);
-     
+            userInputLabel.set_text(e.text);     
 
             //set line wrap
             const clutterText = userInputLabel.get_clutter_text();
@@ -119,9 +108,8 @@ class Indicator extends PanelMenu.Button {
 
             let message = Soup.Message.new('POST', leonUrl);
             message.request_headers.append('x-api-key', key);
-            
-
             message.set_request('application/json', 2,body);
+
             _httpSession.queue_message(message, function (_httpSession, message){
                 const leonOutputLabel = new St.Label({
                     style_class : 'leonText'
@@ -141,23 +129,15 @@ class Indicator extends PanelMenu.Button {
                 });
                 leonLabelcontainer.add_child(leonOutputLabel);
                 chatArea.add_child(leonLabelcontainer);
-        });
-            //message
-
-            //create promise and do https request
+            });
         });
         this.menu.box.add_child(myEntry);
-
-        //const entry = new St.Entry();
-        //this does not work
-        //this.menu.addMenuItem(entry);
     }
 });
 
 class Extension {
     constructor(uuid) {
         this._uuid = uuid;
-
         ExtensionUtils.initTranslations(GETTEXT_DOMAIN);
     }
 
