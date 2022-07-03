@@ -19,14 +19,27 @@ function fillPreferencesWindow(window) {
     const group = new Adw.PreferencesGroup();
     page.add(group);
 
-    // Create a new preferences row
-    const row2 = new Adw.ActionRow({ title: 'HTTP API Key' });
+    // Create preferences rows
+    const row = new Adw.ActionRow({ title: 'Leon URL:' });
+    const row2 = new Adw.ActionRow({ title: 'HTTP API Key:' });
+    group.add(row);
     group.add(row2);
 
     //Create entry and bind it's value
+    const urlEntry = new Gtk.Entry({
+        text: settings.get_string('leon-url')
+    }
+    );
     const entry = new Gtk.Entry({
         text: settings.get_string('api-key')
     }
+    );
+    
+    settings.bind(
+        'leon-url',
+        urlEntry,
+        'text',
+        Gio.SettingsBindFlags.DEFAULT
     );
 
     settings.bind(
@@ -36,7 +49,9 @@ function fillPreferencesWindow(window) {
         Gio.SettingsBindFlags.DEFAULT
     );
 
-    // Add the entry to the row
+    // Add the entries to the row
+    row.add_suffix(urlEntry);
+    row.activatable_widget = urlEntry
     row2.add_suffix(entry);
     row2.activatable_widget = entry;
 

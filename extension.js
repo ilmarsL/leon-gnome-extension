@@ -59,22 +59,11 @@ class Indicator extends PanelMenu.Button {
                 'api-key',
             );
 
-        log('api key is: ');
-        log(key);
+        const leonUrl = this.settings.get_string(
+            'leon-url',
+        );
 
         
-        //TODO deafult menu item, remove later
-        /* 
-        let item = new PopupMenu.PopupMenuItem(_('Show Notification'));
-        item.connect('activate', () => {
-            Main.notify(_('Whatʼs up, folks?'));
-        });
-        this.menu.addMenuItem(item);
-        */
-        
-        //log('class output');
-        //log(Object.getOwnPropertyNames(myItem)); //this shows something, maybe get parent properties?
-
         //add scrollArea
         const scrollArea = new St.ScrollView();
         scrollArea.vscrollbar_policy = St.PolicyType.AUTOMATIC; //TODO  does not work for some reason
@@ -125,13 +114,10 @@ class Indicator extends PanelMenu.Button {
             chatArea.add_child(userLabelcontainer);
 
             //send http message
-            const url = "http://localhost:1337/api/query";
-
-
             const body = JSON.stringify({'query': e.text});
             myEntry.set_text('');
 
-            let message = Soup.Message.new('POST', url);
+            let message = Soup.Message.new('POST', leonUrl);
             message.request_headers.append('x-api-key', key);
             
 
