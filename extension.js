@@ -99,6 +99,8 @@ class Indicator extends PanelMenu.Button {
 
         //add entry (input field)
         let myEntry = new St.Entry();
+        myEntry.set_width(100);
+
         myEntry.clutter_text.connect('activate', (e) => {
             log(`activate signal happened ${e.text}`);
 
