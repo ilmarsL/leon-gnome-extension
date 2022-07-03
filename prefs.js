@@ -30,10 +30,12 @@ function fillPreferencesWindow(window) {
         text: settings.get_string('leon-url')
     }
     );
+    urlEntry.set_width_chars(41);
     const entry = new Gtk.Entry({
         text: settings.get_string('api-key')
     }
     );
+    entry.set_width_chars(41);
     
     settings.bind(
         'leon-url',
