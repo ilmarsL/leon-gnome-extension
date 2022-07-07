@@ -115,7 +115,13 @@ class Indicator extends PanelMenu.Button {
                     style_class : 'leonText'
                 });
                 const response = JSON.parse(message.response_body.data);
-                leonOutputLabel.set_text(response.speeches[0]);
+                if (response.success && response.hasOwnProperty('speeches')) {
+                    leonOutputLabel.set_text(response.speeches[0]);
+                }
+                else {
+                    leonOutputLabel.set_text(`Error: ${JSON.stringify(response)}`);
+                }
+                
 
                 //set line wrap
                 const clutterOutputText = leonOutputLabel.get_clutter_text();
