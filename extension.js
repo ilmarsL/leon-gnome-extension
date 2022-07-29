@@ -103,7 +103,7 @@ class Indicator extends PanelMenu.Button {
             chatArea.add_child(userLabelcontainer);
 
             //send http message
-            const body = JSON.stringify({'query': e.text});
+            const body = JSON.stringify({'utterance': e.text});
             myEntry.set_text('');
 
             let message = Soup.Message.new('POST', leonUrl);
